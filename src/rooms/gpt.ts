@@ -14,7 +14,8 @@ export const run = async (
   language: string, 
   first_request: boolean, 
   message_holder: MessagesPlaceholder,
-  buffer_memory: BufferMemory
+  buffer_memory: BufferMemory,
+  player_number: number
   ) => {
   const chat = new ChatOpenAI({ temperature: 0 });
   let chatPrompt;
@@ -23,7 +24,10 @@ export const run = async (
   if (first_request) {
     chatPrompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        "You acts as a DM in a D&D game. There are two players. The story background is that the players are in a tavern."
+        "This is a multiplayer D&D game. You acts as a DM. There are/is " + player_number + " players/player. " +
+        "The story background is that the players/player are/is in a tavern. They are seeking for a advanture to gain treasure and reputation. " + 
+        "Only reply to the players/player. Continue the story for 5 minutes. Please include the interaction between the players/player." + 
+        "Stop when players/player need to make a decision."
       ),
       message_holder,
       HumanMessagePromptTemplate.fromTemplate("{input}"),
