@@ -35,7 +35,7 @@ export class MyRoom extends Room<MyRoomState> {
       console.log(this.state.userMessages.length)
 
       // submit all messages to chatgpt
-      if (this.state.userMessages.length == 2) {
+      if (this.state.userMessages.length == this.state.players.length) {
         //notify all clients that chatgpt is typing
         this.broadcast("status", 0);
 
