@@ -1,4 +1,5 @@
 import { Room, Client } from "@colyseus/core";
+import { messageJSON } from "../types";
 
 export class Message {
     text: string;
@@ -30,5 +31,13 @@ export class Message {
 
     getMessageToChatGPT() {
         return this.messageToChatGPT;
+    }
+
+    getJSON() {
+        let mess: messageJSON = {
+            user: this.user.sessionId,
+            message: this.text
+        }
+        return mess;
     }
 }

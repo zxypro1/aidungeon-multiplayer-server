@@ -26,7 +26,7 @@ export const run = async (
       SystemMessagePromptTemplate.fromTemplate(
         "This is a multiplayer D&D game. You acts as a DM. There are/is " + player_number + " players/player. " +
         "The story background is that the players/player are/is in a tavern. They are seeking for a advanture to gain treasure and reputation. " + 
-        "Only reply to the players/player. Continue the story for 5 minutes. Please include the interaction between the players/player." + 
+        "Only reply to the players/player. Please include the interaction between the players/player." + 
         "Stop when players/player need to make a decision."
       ),
       message_holder,
@@ -35,7 +35,7 @@ export const run = async (
   } else {
     chatPrompt = ChatPromptTemplate.fromPromptMessages([
       SystemMessagePromptTemplate.fromTemplate(
-        "Now continue the story. Don't forget to use the information from the previous messages. Only continue for 5 minutes."
+        "Now continue the story. Don't forget to use the information from the previous messages. Only continue for what happen in next 5 minutes."
       ),
       message_holder,
       HumanMessagePromptTemplate.fromTemplate("{input}"),

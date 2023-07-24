@@ -2,6 +2,7 @@ import { Room, Client } from "@colyseus/core";
 import { MyRoomState } from "./schema/MyRoomState";
 import { Message } from "./Message";
 import { run } from "./gpt";
+import { messageJSON } from "../types";
 
 
 export class MyRoom extends Room<MyRoomState> {
@@ -23,6 +24,7 @@ export class MyRoom extends Room<MyRoomState> {
       // store user message in state
       if (!this.state.userMessages.some(msg => msg.user === messageObj.user)) {
         this.state.userMessages.push(messageObj);
+        this.state.history.push(messageObj.getJSON());
       }
       console.log(this.state.userMessages.length)
       console.log(this.state.players.length)
@@ -53,10 +55,11 @@ export class MyRoom extends Room<MyRoomState> {
           this.state.firstRequest = false;
           this.state.userMessages = [];
           console.log(response);
-          let mess = {
+          let mess: messageJSON = {
             user: "ChatGPT",
             message: response.response
           }
+          this.state.history.push(mess);
           this.broadcast("type", mess);
         });
       }
@@ -71,6 +74,7 @@ export class MyRoom extends Room<MyRoomState> {
       message: this.state.background_zh
     }
     client.send("type", mess);
+    client.send("history", this.state.history);
   }
 
   onLeave (client: Client, consented: boolean) {
