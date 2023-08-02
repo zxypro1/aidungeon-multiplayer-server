@@ -3,6 +3,7 @@ import { monitor } from "@colyseus/monitor";
 import { playground } from "@colyseus/playground";
 import express from 'express';
 import path from 'path';
+import cors from 'cors';
 
 /**
  * Import your Room files
@@ -50,6 +51,7 @@ export default config({
          * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
          */
         app.use("/colyseus", monitor());
+        app.use(cors())
     },
 
 
