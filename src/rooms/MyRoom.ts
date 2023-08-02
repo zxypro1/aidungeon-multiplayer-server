@@ -18,11 +18,11 @@ export class MyRoom extends Room<MyRoomState> {
       console.log(client.sessionId, ": ", message);
 
       let messageObj = new Message(message, client);
-      // broadcast user message to all clients
-      this.broadcast("type", messageObj.getHttpMessage());
 
       // store user message in state
       if (!this.state.userMessages.some(msg => msg.user === messageObj.user)) {
+        // broadcast user message to all clients
+        this.broadcast("type", messageObj.getHttpMessage());
         this.state.userMessages.push(messageObj);
         this.state.history.push(messageObj.getJSON());
       }

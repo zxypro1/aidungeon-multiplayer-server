@@ -26,7 +26,7 @@ export const run = async (
       SystemMessagePromptTemplate.fromTemplate(
         "This is a multiplayer D&D game. You acts as a DM. There are/is " + player_number + " players/player. " +
         "The story background is that the players/player are/is in a tavern. They are seeking for a advanture to gain treasure and reputation. " + 
-        "Only reply to the players/player. Please include the interaction between the players/player." + 
+        "Please include the interaction between the players/player." + 
         "Stop when players/player need to make a decision."
       ),
       message_holder,
