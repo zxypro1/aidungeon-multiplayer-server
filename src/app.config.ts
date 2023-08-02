@@ -51,7 +51,7 @@ export default config({
          * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
          */
         app.use("/colyseus", monitor());
-        app.use(cors())
+        // app.use(cors())
     },
 
 
