@@ -1,15 +1,16 @@
 import { Room, Client } from "@colyseus/core";
-import { MyRoomState } from "./schema/MyRoomState";
+import { DNDRoomState } from "./schema/DNDRoomState";
 import { Message } from "./Message";
 import { run } from "./gpt";
-import { messageJSON } from "../types";
+import { messageJSON, characterJSON } from "../types";
+import { Character } from "../characters/Character";
 
 
-export class MyRoom extends Room<MyRoomState> {
+export class DNDRoom extends Room<DNDRoomState> {
   maxClients = 4;
   
   onCreate (options: any) {
-    this.setState(new MyRoomState());
+    this.setState(new DNDRoomState());
 
     this.onMessage("type", (client, message: string) => {
       //
@@ -22,7 +23,8 @@ export class MyRoom extends Room<MyRoomState> {
       // store user message in state
       if (!this.state.userMessages.some(msg => msg.user === messageObj.user)) {
         // broadcast user message to all clients
-        this.broadcast("type", messageObj.getHttpMessage());
+        messageObj.setUserName(this.state.characters.find(char => char.getClient().sessionId === messageObj.getUser().sessionId).getName());
+        this.broadcast("type", messageObj.getJSON());
         this.state.userMessages.push(messageObj);
         this.state.history.push(messageObj.getJSON());
       }
@@ -32,12 +34,14 @@ export class MyRoom extends Room<MyRoomState> {
       // submit all messages to chatgpt
       if (this.state.userMessages.length == this.state.players.length) {
         //notify all clients that chatgpt is typing
+        this.lock();
         this.broadcast("status", 0);
 
         // Set up prompt
         let prompt = "";
         for (let i = 0; i < this.state.userMessages.length; i++) {
-          prompt += this.state.userMessages[i].getMessageToChatGPT() + "\n";
+          const mess = this.state.userMessages[i].getMessageToChatGPT();
+          prompt += mess + "\n";
         }
 
         // Send message to chatgpt and broadcast to all clients
@@ -47,7 +51,8 @@ export class MyRoom extends Room<MyRoomState> {
           this.state.firstRequest, 
           this.state.messagePlaceholder, 
           this.state.bufferMemory,
-          this.state.players.length
+          this.state.players.length,
+          this.state.background,
           )
         .then((response) => {
           //notify all clients that chatgpt is done typing
@@ -57,6 +62,7 @@ export class MyRoom extends Room<MyRoomState> {
           console.log(response);
           let mess: messageJSON = {
             user: "ChatGPT",
+            name: "ChatGPT",
             message: response.response
           }
           this.state.history.push(mess);
@@ -64,17 +70,44 @@ export class MyRoom extends Room<MyRoomState> {
         });
       }
     });
+
+    this.onMessage("background", (client, message: string) => {
+      this.state.background = message;
+      this.broadcast("background", message);
+    });
+
+    this.onMessage("character", (client, message: characterJSON) => {
+      for (const i of this.state.characters) {
+        if (i.getClient().sessionId == client.sessionId) {
+          i.setName(message.name);
+          i.setDescription(message.description);
+          break;
+        }
+      }
+      client.send("character", message);
+    });
+
+    this.onMessage("language", (client, message: string) => {
+      this.state.language = message;
+      this.broadcast("language", message);
+    });
   }
 
   onJoin (client: Client, options: any) {
     console.log(client.sessionId, "joined!");
     this.state.players.push(client.sessionId); 
-    let mess = {
+    let newCharacter = new Character("Barry", "A human swordsman.", client);
+    this.state.characters.push(newCharacter);
+    let mess: messageJSON = {
       user: "ChatGPT",
-      message: this.state.background_zh
+      message: this.state.background,
+      name: "ChatGPT"
     }
     client.send("type", mess);
     client.send("history", this.state.history);
+    client.send("background", this.state.background);
+    client.send("character", newCharacter.getInfo());
+    client.send("language", this.state.language);
   }
 
   onLeave (client: Client, consented: boolean) {

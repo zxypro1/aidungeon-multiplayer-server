@@ -8,7 +8,7 @@ import cors from 'cors';
 /**
  * Import your Room files
  */
-import { MyRoom } from "./rooms/MyRoom";
+import { DNDRoom } from "./rooms/DNDRoom";
 
 export default config({
 
@@ -16,7 +16,7 @@ export default config({
         /**
          * Define your room handlers:
          */
-        gameServer.define('my_room', MyRoom);
+        gameServer.define('dnd_room', DNDRoom);
 
     },
 
