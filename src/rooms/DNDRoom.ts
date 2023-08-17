@@ -91,11 +91,20 @@ export class DNDRoom extends Room<DNDRoomState> {
       this.state.language = message;
       this.broadcast("language", message);
     });
+
+    this.onMessage("chat", (client, message: string) => {
+      let messageObj = new Message(message, client);
+      messageObj.setUserName(this.state.characters.find(char => char.getClient().sessionId === messageObj.getUser().sessionId).getName());
+      this.state.chatMessages.push(messageObj);
+      const mess: messageJSON = messageObj.getJSON()
+      this.broadcast("chat", mess);
+    });
   }
 
   onJoin (client: Client, options: any) {
     console.log(client.sessionId, "joined!");
-    this.state.players.push(client.sessionId); 
+    this.state.players.push(client.sessionId);
+    this.state.userMessages.push(new Message("Joined!", client)); 
     let newCharacter = new Character("Barry", "A human swordsman.", client);
     this.state.characters.push(newCharacter);
     let mess: messageJSON = {
@@ -103,11 +112,17 @@ export class DNDRoom extends Room<DNDRoomState> {
       message: this.state.background,
       name: "ChatGPT"
     }
+    const chatMess: Array<messageJSON> = [];
+    for (const i of this.state.chatMessages) {
+      const mess: messageJSON = i.getJSON()
+      chatMess.push(mess);
+    }
     client.send("type", mess);
     client.send("history", this.state.history);
     client.send("background", this.state.background);
     client.send("character", newCharacter.getInfo());
     client.send("language", this.state.language);
+    client.send("chat", chatMess);
   }
 
   onLeave (client: Client, consented: boolean) {

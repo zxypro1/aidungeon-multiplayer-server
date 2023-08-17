@@ -11,6 +11,7 @@ export class DNDRoomState extends Schema {
   @type("string") mySynchronizedProperty: string = "Hello world";
   players: string[] = [];
   userMessages: Array<Message> = [];
+  chatMessages: Array<Message> = [];
   messagePlaceholder: MessagesPlaceholder = new MessagesPlaceholder("history"); // chatgpt memory placeholder
   bufferMemory: BufferMemory = new BufferMemory({ returnMessages: true, memoryKey: "history" }); // chatgpt memory
   @type("boolean") firstRequest: boolean = true;
