@@ -2,43 +2,43 @@ import { Room, Client } from "@colyseus/core";
 import { messageJSON } from "../types";
 
 export class Message {
-    text: string;
-    user: Client;
-    messageToChatGPT: string;
-    userName: string;
+  text: string;
+  user: Client;
+  messageToChatGPT: string;
+  userName: string;
 
-    constructor(text: string, user: Client) {
-        this.text = text;
-        this.user = user;
-    }
+  constructor(text: string, user: Client) {
+    this.text = text;
+    this.user = user;
+  }
 
-    getText() {
-        return this.text;
-    }
-    
-    setUserName(name: string) {
-        this.userName = name;
-    }
+  getText() {
+    return this.text;
+  }
 
-    getUserName() {
-        return this.userName;
-    }
+  setUserName(name: string) {
+    this.userName = name;
+  }
 
-    getUser() {
-        return this.user;
-    }
+  getUserName() {
+    return this.userName;
+  }
 
-    getMessageToChatGPT() {
-        this.messageToChatGPT = this.userName + ": " + this.text;
-        return this.messageToChatGPT;
-    }
+  getUser() {
+    return this.user;
+  }
 
-    getJSON() {
-        let mess: messageJSON = {
-            user: this.user.sessionId,
-            message: this.text,
-            name: this.userName
-        }
-        return mess;
+  getMessageToChatGPT() {
+    this.messageToChatGPT = this.userName + ": " + this.text;
+    return this.messageToChatGPT;
+  }
+
+  getJSON() {
+    let mess: messageJSON = {
+      user: this.user.sessionId,
+      message: this.text,
+      name: this.userName
     }
+    return mess;
+  }
 }

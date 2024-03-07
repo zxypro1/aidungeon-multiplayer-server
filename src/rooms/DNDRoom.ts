@@ -117,12 +117,12 @@ export class DNDRoom extends Room<DNDRoomState> {
       const mess: messageJSON = i.getJSON()
       chatMess.push(mess);
     }
-    client.send("type", mess);
-    client.send("history", this.state.history);
-    client.send("background", this.state.background);
-    client.send("character", newCharacter.getInfo());
-    client.send("language", this.state.language);
-    client.send("chat", chatMess);
+    client.send("type", mess); // sync chatgpt
+    client.send("history", this.state.history); // sync history
+    client.send("background", this.state.background); // sync background
+    client.send("character", newCharacter.getInfo()); // sync character
+    client.send("language", this.state.language); // sync language
+    client.send("chat", chatMess); // sync chat
   }
 
   onLeave (client: Client, consented: boolean) {
