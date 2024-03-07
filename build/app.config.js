@@ -10,13 +10,13 @@ const path_1 = __importDefault(require("path"));
 /**
  * Import your Room files
  */
-const MyRoom_1 = require("./rooms/MyRoom");
+const DNDRoom_1 = require("./rooms/DNDRoom");
 exports.default = (0, tools_1.default)({
     initializeGameServer: (gameServer) => {
         /**
          * Define your room handlers:
          */
-        gameServer.define('my_room', MyRoom_1.MyRoom);
+        gameServer.define('dnd_room', DNDRoom_1.DNDRoom);
     },
     initializeExpress: (app) => {
         /**
@@ -31,18 +31,20 @@ exports.default = (0, tools_1.default)({
          * (It is not recommended to expose this route in a production environment)
          */
         // Use index.html in /static
+        console.log(process.env.NODE_ENV);
         if (process.env.NODE_ENV == "production") {
             app.use(express_1.default.static(path_1.default.join(__dirname, 'static')));
         }
-        // if (process.env.NODE_ENV !== "production") {
-        //     app.use("/", playground);
-        // }
+        if (process.env.NODE_ENV !== "production") {
+            app.use(express_1.default.static(path_1.default.join(__dirname, 'static')));
+        }
         /**
          * Use @colyseus/monitor
          * It is recommended to protect this route with a password
          * Read more: https://docs.colyseus.io/tools/monitor/#restrict-access-to-the-panel-using-a-password
          */
         app.use("/colyseus", (0, monitor_1.monitor)());
+        // app.use(cors())
     },
     beforeListen: () => {
         /**

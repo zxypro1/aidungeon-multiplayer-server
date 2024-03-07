@@ -2,10 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Character = void 0;
 class Character {
-    constructor(name, description, image) {
+    constructor(name, description, client) {
         this.name = name;
         this.description = description;
-        this.image = image;
+        this.client = client;
+        // pick a random light color
+        this.color = 'hsl(' + 360 * Math.random() + ',' +
+            (25 + 70 * Math.random()) + '%,' +
+            (85 + 10 * Math.random()) + '%)';
     }
     // getters
     getName() {
@@ -16,6 +20,17 @@ class Character {
     }
     getImage() {
         return this.image;
+    }
+    getClient() {
+        return this.client;
+    }
+    getInfo() {
+        let info = {
+            name: this.name,
+            description: this.description,
+            color: this.color
+        };
+        return info;
     }
     // setters
     setName(name) {

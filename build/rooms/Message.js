@@ -5,23 +5,30 @@ class Message {
     constructor(text, user) {
         this.text = text;
         this.user = user;
-        this.messageToChatGPT = this.user.sessionId + ": " + this.text;
     }
     getText() {
         return this.text;
     }
-    getHttpMessage() {
-        let mess = {
-            user: this.user.sessionId,
-            message: this.text
-        };
-        return mess;
+    setUserName(name) {
+        this.userName = name;
+    }
+    getUserName() {
+        return this.userName;
     }
     getUser() {
         return this.user;
     }
     getMessageToChatGPT() {
+        this.messageToChatGPT = this.userName + ": " + this.text;
         return this.messageToChatGPT;
+    }
+    getJSON() {
+        let mess = {
+            user: this.user.sessionId,
+            message: this.text,
+            name: this.userName
+        };
+        return mess;
     }
 }
 exports.Message = Message;
